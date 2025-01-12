@@ -65,7 +65,7 @@ impl MazeState {
         0 <= x && x < H as isize && 0 <= y && y < W as isize
     }
 
-    fn legal_actions(&self) -> Vec<usize> {
+    pub(crate) fn legal_actions(&self) -> Vec<usize> {
         let mut actions = vec![];
         for action in 0..4 {
             let nx = self.character.x as isize + Self::DX[action];
@@ -84,5 +84,28 @@ impl MazeState {
         self.game_score += *point;
         *point = 0;
         self.turn += 1;
+    }
+
+    pub fn to_string(&self) -> String {
+        let mut result = String::new();
+
+        result.push_str(&format!("Turn: {}, Score: {}\n", self.turn, self.game_score));
+
+        for row in 0..H {
+            for col in 0..W {
+                if row == self.character.x && col == self.character.y {
+                    result.push('@');
+                } else if self.points[row][col] > 0 {
+                    let val = self.points[row][col];
+                    result.push_str(&val.to_string());
+                } else {
+                    result.push('.');
+                }
+                result.push(' ');
+            }
+            result.push('\n');
+        }
+
+        result
     }
 }
