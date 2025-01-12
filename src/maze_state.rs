@@ -89,7 +89,10 @@ impl MazeState {
     pub fn to_string(&self) -> String {
         let mut result = String::new();
 
-        result.push_str(&format!("Turn: {}, Score: {}\n", self.turn, self.game_score));
+        result.push_str(&format!(
+            "Turn: {}, Score: {}\n",
+            self.turn, self.game_score
+        ));
 
         for row in 0..H {
             for col in 0..W {
@@ -108,4 +111,21 @@ impl MazeState {
 
         result
     }
+}
+
+fn random_action(state: &MazeState) -> usize {
+    let legal_actions = state.legal_actions();
+    let mut rng = StdRng::seed_from_u64(5);
+    legal_actions[rng.gen_range(0..legal_actions.len())]
+}
+
+pub fn play_game(seed: u64) -> i32 {
+    let mut state = MazeState::new(seed);
+    println!("{}", state.to_string());
+    while !state.is_done() {
+        let action = random_action(&state);
+        state.advance(action);
+        println!("{}", state.to_string());
+    }
+    state.game_score
 }
