@@ -1,15 +1,21 @@
 use crate::maze_state::MazeState;
+use crate::time_keeper::TimeKeeper;
 use std::collections::BinaryHeap;
 
 const BEAM_WIDTH: usize = 1;
-const BEAM_DEPTH: usize = 7;
-const BEAM_NUMBER: usize = 7;
+const BEAM_DEPTH: usize = 10;
+const BEAM_NUMBER: usize = 4;
+const TIME_THRESHOLD_MS: i64 = 10;
 
 pub fn chokudai_search_action(state: &MazeState) -> usize {
+    let time_keeper = TimeKeeper::new(TIME_THRESHOLD_MS);
     let mut beam: Vec<BinaryHeap<MazeState>> = vec![BinaryHeap::new(); BEAM_DEPTH + 1];
     beam[0].push(state.clone());
 
     for _ in 0..BEAM_NUMBER {
+        if time_keeper.is_time_over() {
+            break;
+        }
         for depth in 0..BEAM_DEPTH {
             let (left, right) = beam.split_at_mut(depth + 1);
             let current_beam = &mut left[depth];

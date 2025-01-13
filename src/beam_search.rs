@@ -1,9 +1,9 @@
 use crate::maze_state::MazeState;
-use std::collections::BinaryHeap;
 use crate::time_keeper::TimeKeeper;
+use std::collections::BinaryHeap;
 
 const BEAM_WIDTH: usize = 4;
-const BEAM_DEPTH: usize = 4;
+const BEAM_DEPTH: usize = 10;
 const TIME_THRESHOLD_MS: i64 = 10;
 
 pub fn beam_search_action(state: &MazeState) -> usize {
