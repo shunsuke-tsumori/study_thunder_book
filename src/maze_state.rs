@@ -1,3 +1,4 @@
+use std::time::{SystemTime, UNIX_EPOCH};
 use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
 
@@ -17,7 +18,7 @@ impl Coord {
 
 const H: usize = 3;
 const W: usize = 4;
-const END_TURN: i32 = 4;
+const END_TURN: i32 = 10;
 
 pub struct MazeState {
     points: Vec<Vec<i32>>,
@@ -115,7 +116,13 @@ impl MazeState {
 
 fn random_action(state: &MazeState) -> usize {
     let legal_actions = state.legal_actions();
-    let mut rng = StdRng::seed_from_u64(5);
+
+    let since_epoch = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("Time went backwards");
+    let seed = since_epoch.as_nanos() as u64;
+
+    let mut rng = StdRng::seed_from_u64(seed);
     legal_actions[rng.gen_range(0..legal_actions.len())]
 }
 
