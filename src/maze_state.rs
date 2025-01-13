@@ -1,30 +1,23 @@
-use std::time::{SystemTime, UNIX_EPOCH};
 use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
 
+#[derive(Clone)]
 pub struct Coord {
     pub x: usize,
     pub y: usize,
-}
-
-impl Coord {
-    fn new() -> Self {
-        Self {
-            x: 0usize,
-            y: 0usize,
-        }
-    }
 }
 
 const H: usize = 3;
 const W: usize = 4;
 const END_TURN: i32 = 10;
 
+#[derive(Clone)]
 pub struct MazeState {
     points: Vec<Vec<i32>>,
     turn: i32,
     pub character: Coord,
     pub game_score: i32,
+    pub evaluated_score: i32,
 }
 
 impl MazeState {
@@ -55,6 +48,7 @@ impl MazeState {
             turn: 0,
             character: Coord { x, y },
             game_score: 0,
+            evaluated_score: 0,
         }
     }
 
@@ -112,25 +106,44 @@ impl MazeState {
 
         result
     }
+
+    pub fn evaluated_score(&mut self) {
+        self.evaluated_score = self.game_score
+    }
 }
 
-fn random_action(state: &MazeState) -> usize {
+#[allow(dead_code)]
+pub fn random_action(state: &MazeState) -> usize {
     let legal_actions = state.legal_actions();
-
-    let since_epoch = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .expect("Time went backwards");
-    let seed = since_epoch.as_nanos() as u64;
-
-    let mut rng = StdRng::seed_from_u64(seed);
+    let mut rng = rand::thread_rng();
     legal_actions[rng.gen_range(0..legal_actions.len())]
 }
 
-pub fn play_game(seed: u64) -> i32 {
+pub fn greedy_action(state: &MazeState) -> usize {
+    let legal_actions = state.legal_actions();
+    let mut max_score = i32::MIN;
+    let mut best_action = legal_actions[0];
+    for action in legal_actions {
+        let mut current_state = state.clone();
+        current_state.advance(action);
+        current_state.evaluated_score();
+        if current_state.evaluated_score > max_score {
+            max_score = current_state.evaluated_score;
+            best_action = action;
+        }
+    }
+
+    best_action
+}
+
+pub fn play_game<F>(seed: u64, policy: F) -> i32
+where
+    F: Fn(&MazeState) -> usize,
+{
     let mut state = MazeState::new(seed);
     println!("{}", state.to_string());
     while !state.is_done() {
-        let action = random_action(&state);
+        let action = policy(&state);
         state.advance(action);
         println!("{}", state.to_string());
     }
