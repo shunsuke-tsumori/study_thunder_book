@@ -1,15 +1,19 @@
 use crate::maze_state::{greedy_action, play_game, random_action};
 use crate::beam_search::beam_search_action;
+use crate::chokudai_search::chokudai_search_action;
 
 mod maze_state;
 mod beam_search;
 mod time_keeper;
+mod chokudai_search;
 
 fn main() {
     let trials = 100;
     let mut sum_random = 0;
     let mut sum_greedy = 0;
     let mut sum_beam = 0;
+    let mut sum_chokudai = 0;
+
     let verbose = false;
 
     for i in 0..trials {
@@ -30,6 +34,12 @@ fn main() {
     }
     let avg_beam = sum_beam as f64 / trials as f64;
 
+    for i in 0..trials {
+        let score = play_game(i as u64, chokudai_search_action, verbose);
+        sum_chokudai += score;
+    }
+    let avg_chokudai = sum_chokudai as f64 / trials as f64;
+
     println!(
         "Random Action Average Score ({} trials) = {}",
         trials, avg_random
@@ -41,5 +51,9 @@ fn main() {
     println!(
         "Beam Search Action Average Score ({} trials) = {}",
         trials, avg_beam
+    );
+    println!(
+        "Chokudai Search Action Average Score ({} trials) = {}",
+        trials, avg_chokudai
     );
 }

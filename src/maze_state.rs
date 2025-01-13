@@ -21,6 +21,18 @@ pub struct MazeState {
     pub first_action: isize,
 }
 
+impl Ord for MazeState {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.evaluated_score.cmp(&other.evaluated_score)
+    }
+}
+
+impl PartialOrd for MazeState {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
 impl MazeState {
     const DX: [isize; 4] = [1, -1, 0, 0];
     const DY: [isize; 4] = [0, 0, 1, -1];

@@ -6,18 +6,6 @@ const BEAM_WIDTH: usize = 4;
 const BEAM_DEPTH: usize = 4;
 const TIME_THRESHOLD_MS: i64 = 10;
 
-impl Ord for MazeState {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        self.evaluated_score.cmp(&other.evaluated_score)
-    }
-}
-
-impl PartialOrd for MazeState {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        Some(self.cmp(other))
-    }
-}
-
 pub fn beam_search_action(state: &MazeState) -> usize {
     let mut current_beam = BinaryHeap::new();
     let mut best_state: MazeState = state.clone();
