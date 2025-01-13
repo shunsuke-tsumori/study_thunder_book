@@ -1,7 +1,7 @@
 use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
 
-#[derive(Clone)]
+#[derive(Clone, Eq, PartialEq)]
 pub struct Coord {
     pub x: usize,
     pub y: usize,
@@ -9,15 +9,16 @@ pub struct Coord {
 
 const H: usize = 3;
 const W: usize = 4;
-const END_TURN: i32 = 10;
+const END_TURN: i32 = 5;
 
-#[derive(Clone)]
+#[derive(Clone, Eq, PartialEq)]
 pub struct MazeState {
     points: Vec<Vec<i32>>,
     turn: i32,
     pub character: Coord,
     pub game_score: i32,
     pub evaluated_score: i32,
+    pub first_action: isize,
 }
 
 impl MazeState {
@@ -49,6 +50,7 @@ impl MazeState {
             character: Coord { x, y },
             game_score: 0,
             evaluated_score: 0,
+            first_action: -1,
         }
     }
 
@@ -107,7 +109,7 @@ impl MazeState {
         result
     }
 
-    pub fn evaluated_score(&mut self) {
+    pub fn evaluate_score(&mut self) {
         self.evaluated_score = self.game_score
     }
 }
@@ -126,7 +128,7 @@ pub fn greedy_action(state: &MazeState) -> usize {
     for action in legal_actions {
         let mut current_state = state.clone();
         current_state.advance(action);
-        current_state.evaluated_score();
+        current_state.evaluate_score();
         if current_state.evaluated_score > max_score {
             max_score = current_state.evaluated_score;
             best_action = action;
