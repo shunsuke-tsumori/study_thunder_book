@@ -1,8 +1,10 @@
 use crate::maze_state::MazeState;
 use std::collections::BinaryHeap;
+use crate::time_keeper::TimeKeeper;
 
-const BEAM_WIDTH: usize = 2;
-const BEAM_DEPTH: usize = 2;
+const BEAM_WIDTH: usize = 4;
+const BEAM_DEPTH: usize = 4;
+const TIME_THRESHOLD_MS: i64 = 10;
 
 impl Ord for MazeState {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
@@ -19,11 +21,15 @@ impl PartialOrd for MazeState {
 pub fn beam_search_action(state: &MazeState) -> usize {
     let mut current_beam = BinaryHeap::new();
     let mut best_state: MazeState = state.clone();
+    let time_keeper = TimeKeeper::new(TIME_THRESHOLD_MS);
 
     current_beam.push(state.clone());
     for depth in 0..BEAM_DEPTH {
         let mut next_beam = BinaryHeap::new();
         for _ in 0..BEAM_WIDTH {
+            if time_keeper.is_time_over() {
+                return best_state.first_action as usize;
+            }
             let current_state = if let Some(s) = current_beam.pop() {
                 s
             } else {

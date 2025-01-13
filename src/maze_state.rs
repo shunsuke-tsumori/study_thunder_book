@@ -7,9 +7,9 @@ pub struct Coord {
     pub y: usize,
 }
 
-const H: usize = 3;
-const W: usize = 4;
-const END_TURN: i32 = 5;
+const H: usize = 30;
+const W: usize = 30;
+const END_TURN: i32 = 100;
 
 #[derive(Clone, Eq, PartialEq)]
 pub struct MazeState {
@@ -138,16 +138,20 @@ pub fn greedy_action(state: &MazeState) -> usize {
     best_action
 }
 
-pub fn play_game<F>(seed: u64, policy: F) -> i32
+pub fn play_game<F>(seed: u64, policy: F, verbose: bool) -> i32
 where
     F: Fn(&MazeState) -> usize,
 {
     let mut state = MazeState::new(seed);
-    println!("{}", state.to_string());
+    if verbose {
+        println!("{}", state.to_string());
+    }
     while !state.is_done() {
         let action = policy(&state);
         state.advance(action);
-        println!("{}", state.to_string());
+        if verbose {
+            println!("{}", state.to_string());
+        }
     }
     state.game_score
 }
