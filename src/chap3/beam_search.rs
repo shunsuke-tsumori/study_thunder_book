@@ -1,5 +1,5 @@
-use crate::maze_state::MazeState;
-use crate::time_keeper::TimeKeeper;
+use crate::chap3::maze_state::MazeState;
+use crate::chap3::time_keeper::TimeKeeper;
 use std::collections::BinaryHeap;
 
 const BEAM_WIDTH: usize = 4;
