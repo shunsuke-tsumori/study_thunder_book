@@ -160,6 +160,7 @@ pub fn random_action(mut state: AutoMoveMazeState, seed: u64) -> AutoMoveMazeSta
 type AIFunction = fn(AutoMoveMazeState, u64) -> AutoMoveMazeState;
 pub type StringAIPair = (&'static str, AIFunction);
 
+#[allow(dead_code)]
 pub fn play_game(ai: StringAIPair, seed: u64) {
     let mut state = AutoMoveMazeState::new(seed);
     state = (ai.1)(state, seed);
