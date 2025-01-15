@@ -1,7 +1,8 @@
-mod chap3;
+mod auto_move_maze_state;
 
-use crate::chap3::test_actions;
+use crate::auto_move_maze_state::{play_game, random_action, StringAIPair};
 
 fn main() {
-    test_actions::test_actions();
+    let ai: StringAIPair = ("randomAction", random_action);
+    play_game(ai, 0)
 }
