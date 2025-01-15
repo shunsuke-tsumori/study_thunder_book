@@ -42,6 +42,22 @@ impl AutoMoveMazeState {
         }
     }
 
+    pub fn init(&mut self, seed: u64) {
+        let mut rng = StdRng::seed_from_u64(seed);
+
+        for character in self.characters.iter_mut() {
+            character.y = rng.gen_range(0..H);
+            character.x = rng.gen_range(0..W);
+        }
+    }
+
+    pub fn transition(&mut self) {
+        let mut rng = rand::thread_rng();
+        let target = &mut self.characters[rng.gen_range(0..CHARACTER_N)];
+        target.y = rng.gen_range(0..H);
+        target.x = rng.gen_range(0..W);
+    }
+
     pub fn set_character(&mut self, character_id: usize, y: usize, x: usize) {
         if character_id < self.characters.len() {
             self.characters[character_id].y = y;
@@ -72,8 +88,10 @@ impl AutoMoveMazeState {
                 }
             }
         }
-        self.characters[character_id].y = (current_y as isize + Self::DY[best_action_index]) as usize;
-        self.characters[character_id].x = (current_x as isize + Self::DX[best_action_index]) as usize;
+        self.characters[character_id].y =
+            (current_y as isize + Self::DY[best_action_index]) as usize;
+        self.characters[character_id].x =
+            (current_x as isize + Self::DX[best_action_index]) as usize;
     }
 
     pub fn advance(&mut self) {
